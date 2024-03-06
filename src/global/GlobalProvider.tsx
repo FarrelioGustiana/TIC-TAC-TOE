@@ -1,12 +1,16 @@
-import React, { createContext, ReactNode } from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 
-type GlobalContextProps = {
+export type GlobalContextProps = {
   winCombo: number[][];
   player: { one: string; two: string };
   turn: string;
+  setTurn: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const GlobalContext = createContext<GlobalContextProps | null>(null);
+
+export const useGlobal = () =>
+  useContext<GlobalContextProps | null>(GlobalContext);
 
 type GlobalProviderProps = {
   children: ReactNode;
@@ -17,7 +21,8 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     one: "X",
     two: "O",
   };
-  const turn: string = player.one;
+  const [turn, setTurn] = useState<string>(player.one);
+
   const winCombo: number[][] = [
     [1, 2, 3],
     [4, 5, 6],
@@ -35,6 +40,7 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         winCombo,
         player,
         turn,
+        setTurn,
       }}
     >
       <div>{children}</div>

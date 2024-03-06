@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { GlobalContextProps, useGlobal } from "../global/GlobalProvider";
 
 const range = (x: number, y: number): number[] => {
   let result: number[] = [];
@@ -9,14 +10,7 @@ const range = (x: number, y: number): number[] => {
 };
 
 const Boards: React.FC = () => {
-  const handleClick = (
-    p: string,
-    num: number,
-    setSign: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    setSign(p);
-  };
-
+  const { turn, setTurn, player } = useGlobal() as GlobalContextProps;
   return (
     <div className="mt-2 grid grid-cols-3 items-center justify-center rounded-sm overflow-hidden">
       {range(1, 9).map((num) => {
@@ -29,7 +23,12 @@ const Boards: React.FC = () => {
             } ${num >= 7 ? "border-b-none" : "border-b-white border-b-[4px]"} `}
           >
             <button
-              onClick={() => handleClick("x", num, setSign)}
+              onClick={() => {
+                setSign(turn);
+                setTurn(() => {
+                  return turn === player.one ? player.two : player.one;
+                });
+              }}
               className="hover:bg-blue-200 transition-all hover:opacity-30 w-full h-full "
             >
               {sign}
