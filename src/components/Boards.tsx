@@ -14,6 +14,7 @@ const Boards: React.FC = () => {
   return (
     <div className="mt-2 grid grid-cols-3 items-center justify-center rounded-sm overflow-hidden">
       {range(1, 9).map((num) => {
+        const [clicked, setClicked] = useState<boolean>(false);
         const [sign, setSign] = useState<string>("");
         return (
           <div
@@ -23,13 +24,17 @@ const Boards: React.FC = () => {
             } ${num >= 7 ? "border-b-none" : "border-b-white border-b-[4px]"} `}
           >
             <button
+              disabled={clicked}
               onClick={() => {
                 setSign(turn);
                 setTurn(() => {
                   return turn === player.one ? player.two : player.one;
                 });
+                setClicked(true);
               }}
-              className="hover:bg-blue-200 transition-all hover:opacity-30 w-full h-full "
+              className={`transition-all w-full h-full text-6xl font-bold ${
+                clicked ? "" : "hover:bg-blue-200 hover:opacity-30"
+              }`}
             >
               {sign}
             </button>
