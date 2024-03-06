@@ -5,6 +5,14 @@ export type GlobalContextProps = {
   player: { one: string; two: string };
   turn: string;
   setTurn: React.Dispatch<React.SetStateAction<string>>;
+  setOne: React.Dispatch<React.SetStateAction<number[]>>;
+  setTwo: React.Dispatch<React.SetStateAction<number[]>>;
+  one: number[];
+  two: number[];
+  allCells: number[];
+  isDraw: () => boolean;
+  oneWin: boolean;
+  twoWin: boolean;
 };
 
 const GlobalContext = createContext<GlobalContextProps | null>(null);
@@ -21,6 +29,11 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     one: "X",
     two: "O",
   };
+
+  // This is to contain the player moves
+  const [one, setOne] = useState<number[]>([]);
+  const [two, setTwo] = useState<number[]>([]);
+
   const [turn, setTurn] = useState<string>(player.one);
 
   const winCombo: number[][] = [
@@ -34,6 +47,21 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     [3, 5, 7],
   ];
 
+  const allCells: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  function isWin(moves: number[]): boolean {
+    return winCombo.some((cell) => cell.every((num) => moves.includes(num)));
+  }
+
+  function isDraw() {
+    const totalMoves = one.length + two.length;
+
+    return allCells.length === totalMoves && !isWin(one) && !isWin(two);
+  }
+
+  const oneWin = isWin(one);
+  const twoWin = isWin(two);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -41,6 +69,14 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         player,
         turn,
         setTurn,
+        setOne,
+        setTwo,
+        one,
+        two,
+        allCells,
+        isDraw,
+        oneWin,
+        twoWin,
       }}
     >
       <div>{children}</div>

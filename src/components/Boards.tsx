@@ -1,19 +1,12 @@
 import React, { useState } from "react";
 import { GlobalContextProps, useGlobal } from "../global/GlobalProvider";
 
-const range = (x: number, y: number): number[] => {
-  let result: number[] = [];
-  for (let i: number = x; i <= y; i++) {
-    result.push(i);
-  }
-  return result;
-};
-
 const Boards: React.FC = () => {
-  const { turn, setTurn, player } = useGlobal() as GlobalContextProps;
+  const { allCells, turn, setTurn, player, setOne, setTwo, oneWin, twoWin } =
+    useGlobal() as GlobalContextProps;
   return (
     <div className="mt-2 grid grid-cols-3 items-center justify-center rounded-sm overflow-hidden">
-      {range(1, 9).map((num) => {
+      {allCells.map((num) => {
         const [clicked, setClicked] = useState<boolean>(false);
         const [sign, setSign] = useState<string>("");
         return (
@@ -24,16 +17,23 @@ const Boards: React.FC = () => {
             } ${num >= 7 ? "border-b-none" : "border-b-white border-b-[4px]"} `}
           >
             <button
-              disabled={clicked}
+              disabled={clicked || oneWin || twoWin}
               onClick={() => {
                 setSign(turn);
+                if (turn === player.one) {
+                  setOne((prev) => [...prev, num]);
+                } else {
+                  setTwo((prev) => [...prev, num]);
+                }
                 setTurn(() => {
                   return turn === player.one ? player.two : player.one;
                 });
                 setClicked(true);
               }}
               className={`transition-all w-full h-full text-6xl font-bold ${
-                clicked ? "" : "hover:bg-blue-200 hover:opacity-30"
+                clicked || oneWin || twoWin
+                  ? ""
+                  : "hover:bg-blue-200 hover:opacity-30"
               }`}
             >
               {sign}
