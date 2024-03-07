@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import { GlobalContextProps, useGlobal } from "../global/GlobalProvider";
 
 const Boards: React.FC = () => {
-  const { allCells, turn, setTurn, player, setOne, setTwo, oneWin, twoWin } =
-    useGlobal() as GlobalContextProps;
+  const {
+    allCells,
+    turn,
+    setTurn,
+    player,
+    setOne,
+    setTwo,
+    oneWin,
+    twoWin,
+    setAllCells,
+  } = useGlobal() as GlobalContextProps;
   return (
     <div className="mt-2 grid grid-cols-3 items-center justify-center rounded-sm overflow-hidden">
-      {allCells.map((num) => {
-        const [clicked, setClicked] = useState<boolean>(false);
-        const [sign, setSign] = useState<string>("");
+      {allCells.map((mark, idx) => {
+        const num = idx + 1;
+        const clicked = !allCells[idx] ? false : true;
         return (
           <div
-            key={num}
+            key={idx}
             className={`w-[100px] h-[100px]  ${
               num % 3 === 0 ? "border-r-none" : "border-r-white border-r-[4px]"
             } ${num >= 7 ? "border-b-none" : "border-b-white border-b-[4px]"} `}
@@ -19,7 +28,10 @@ const Boards: React.FC = () => {
             <button
               disabled={clicked || oneWin || twoWin}
               onClick={() => {
-                setSign(turn);
+                setAllCells((array) => {
+                  array[idx] = turn;
+                  return array;
+                });
                 if (turn === player.one) {
                   setOne((prev) => [...prev, num]);
                 } else {
@@ -28,7 +40,6 @@ const Boards: React.FC = () => {
                 setTurn(() => {
                   return turn === player.one ? player.two : player.one;
                 });
-                setClicked(true);
               }}
               className={`transition-all w-full h-full text-6xl font-bold ${
                 clicked || oneWin || twoWin
@@ -36,7 +47,7 @@ const Boards: React.FC = () => {
                   : "hover:bg-blue-200 hover:opacity-30"
               }`}
             >
-              {sign}
+              {mark}
             </button>
           </div>
         );

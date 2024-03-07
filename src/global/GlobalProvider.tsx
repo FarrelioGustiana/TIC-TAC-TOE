@@ -1,18 +1,27 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useState,
+} from "react";
 
 export type GlobalContextProps = {
   winCombo: number[][];
   player: { one: string; two: string };
   turn: string;
-  setTurn: React.Dispatch<React.SetStateAction<string>>;
-  setOne: React.Dispatch<React.SetStateAction<number[]>>;
-  setTwo: React.Dispatch<React.SetStateAction<number[]>>;
+  setTurn: Dispatch<SetStateAction<string>>;
+  setOne: Dispatch<SetStateAction<number[]>>;
+  setTwo: Dispatch<SetStateAction<number[]>>;
   one: number[];
   two: number[];
-  allCells: number[];
+  allCells: string[];
+  setAllCells: Dispatch<SetStateAction<string[]>>;
   isDraw: () => boolean;
   oneWin: boolean;
   twoWin: boolean;
+  reset: () => void;
 };
 
 const GlobalContext = createContext<GlobalContextProps | null>(null);
@@ -47,7 +56,17 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     [3, 5, 7],
   ];
 
-  const allCells: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const [allCells, setAllCells] = useState<string[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
 
   function isWin(moves: number[]): boolean {
     return winCombo.some((cell) => cell.every((num) => moves.includes(num)));
@@ -62,6 +81,14 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const oneWin = isWin(one);
   const twoWin = isWin(two);
 
+  function reset(): void {
+    setOne([]);
+    setTwo([]);
+    setAllCells(["", "", "", "", "", "", "", "", ""]);
+    setTurn(player.one);
+    console.log(oneWin);
+  }
+
   return (
     <GlobalContext.Provider
       value={{
@@ -74,9 +101,11 @@ const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         one,
         two,
         allCells,
+        setAllCells,
         isDraw,
         oneWin,
         twoWin,
+        reset,
       }}
     >
       <div>{children}</div>

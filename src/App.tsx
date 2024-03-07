@@ -3,7 +3,7 @@ import Boards from "./components/Boards";
 import { GlobalContextProps, useGlobal } from "./global/GlobalProvider";
 
 const App: React.FC = () => {
-  const { isDraw, oneWin, twoWin } = useGlobal() as GlobalContextProps;
+  const { isDraw, oneWin, twoWin, reset } = useGlobal() as GlobalContextProps;
 
   return (
     <div className="p-3 bg-slate-900 min-h-screen text-white">
@@ -27,6 +27,12 @@ const App: React.FC = () => {
             Player Two win "O"
           </p>
         )}
+        <button
+          onClick={reset}
+          className="px-3 border-white border-[2px] py-2 tracking-wider rounded font-semibold hover:bg-white hover:text-slate-900 transition-all"
+        >
+          Reset
+        </button>
       </main>
     </div>
   );
